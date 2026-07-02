@@ -7,7 +7,6 @@ import Buildings from './Buildings';
 import Roads from './Roads';
 import StreetLights from './StreetLights';
 import Trees from './Trees';
-import Water from './Water';
 
 interface CityProps {
   animated: React.MutableRefObject<AnimatedPreset>;
@@ -29,13 +28,13 @@ export default function City({ animated }: CityProps) {
 
   return (
     <group scale={CITY_SCALE}>
-      <Water animated={animated} />
       <group ref={groupRef}>
-        <mesh position={[0, -0.25, 0]} receiveShadow castShadow>
-          <cylinderGeometry args={[PLATFORM_RADIUS, PLATFORM_RADIUS * 1.05, 0.5, 8]} />
-          <meshStandardMaterial attach="material-0" color="#8a7a63" flatShading roughness={0.95} />
-          <meshStandardMaterial attach="material-1" color="#6fae5a" flatShading roughness={0.9} />
-          <meshStandardMaterial attach="material-2" color="#5a4c3c" flatShading roughness={0.95} />
+        {/* Chunky floating slab: grass top, soil sides, darker underside. */}
+        <mesh position={[0, -0.65, 0]} receiveShadow castShadow>
+          <cylinderGeometry args={[PLATFORM_RADIUS, PLATFORM_RADIUS * 0.98, 1.3, 8]} />
+          <meshStandardMaterial attach="material-0" color="#9c8a6f" flatShading roughness={0.95} />
+          <meshStandardMaterial attach="material-1" color="#6f9256" flatShading roughness={0.9} />
+          <meshStandardMaterial attach="material-2" color="#4a3f31" flatShading roughness={0.95} />
         </mesh>
         <Roads />
         <Buildings buildings={layout.buildings} animated={animated} />

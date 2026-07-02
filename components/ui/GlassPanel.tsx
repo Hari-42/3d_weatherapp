@@ -8,11 +8,9 @@ interface GlassPanelProps {
 }
 
 /**
- * A flat translucent panel standing in for a real blur. expo-blur's Android
- * BlurView (RenderScript-based on API <31) can crash with
- * "RSInvalidStateException: no Context active" when it tries to sample
- * content that includes a live GL surface — exactly what sits behind this
- * panel (the react-three-fiber Canvas). A solid tint avoids that risk.
+ * A fully transparent panel with only an outline — the 3D scene shows straight
+ * through it. (A real blur via expo-blur is avoided: its Android BlurView can
+ * crash sampling the live GL surface behind this panel.)
  */
 export default function GlassPanel({ children, style }: GlassPanelProps) {
   return <View style={[styles.wrapper, style]}>{children}</View>;
@@ -21,8 +19,8 @@ export default function GlassPanel({ children, style }: GlassPanelProps) {
 const styles = StyleSheet.create({
   wrapper: {
     borderRadius: 24,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: theme.glassBorder,
-    backgroundColor: theme.glass,
+    backgroundColor: 'transparent',
   },
 });

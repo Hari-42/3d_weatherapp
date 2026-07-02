@@ -38,7 +38,7 @@ export default function Trees({ trees }: TreesProps) {
       </instancedMesh>
       <instancedMesh ref={foliageRef} args={[undefined, undefined, count]} castShadow>
         <icosahedronGeometry args={[0.32, 0]} />
-        <meshStandardMaterial color="#4f9b5c" flatShading roughness={0.8} />
+        <meshStandardMaterial color="#5c7d4f" flatShading roughness={0.85} />
       </instancedMesh>
     </group>
   );

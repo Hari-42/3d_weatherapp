@@ -1,3 +1,4 @@
+import { Feather } from '@expo/vector-icons';
 import { Canvas } from '@react-three/fiber/native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -103,7 +104,7 @@ export default function HomeScreen() {
       )}
 
       <Pressable style={styles.addButton} onPress={() => setAdding(true)} hitSlop={10}>
-        <Text style={styles.addIcon}>+</Text>
+        <Feather name="plus" size={22} color={theme.textPrimary} />
       </Pressable>
 
       {cities.length > 1 ? <PageDots count={cities.length} activeIndex={cityIndex} /> : null}
@@ -136,12 +137,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.12)',
     borderWidth: 1,
     borderColor: theme.glassBorder,
-  },
-  addIcon: {
-    color: theme.textPrimary,
-    fontSize: 24,
-    lineHeight: 26,
-    fontWeight: '400',
   },
   empty: {
     ...StyleSheet.absoluteFillObject,

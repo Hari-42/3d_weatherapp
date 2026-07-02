@@ -1,8 +1,11 @@
 export type WeatherType = 'sunny' | 'rainy' | 'cloudy' | 'night';
 
+/** Feather icon name representing each weather condition (see @expo/vector-icons). */
+export type WeatherIconName = 'sun' | 'cloud' | 'cloud-rain' | 'moon';
+
 export interface WeatherPreset {
   label: string;
-  icon: string;
+  icon: WeatherIconName;
   temperature: number;
   sky: [string, string];
   fogColor: string;
@@ -23,7 +26,7 @@ export interface WeatherPreset {
 export const WEATHER_PRESETS: Record<WeatherType, WeatherPreset> = {
   sunny: {
     label: 'Sunny',
-    icon: '☀️',
+    icon: 'sun',
     temperature: 24,
     sky: ['#8ed2ff', '#eaf7ff'],
     fogColor: '#bfe6ff',
@@ -41,7 +44,7 @@ export const WEATHER_PRESETS: Record<WeatherType, WeatherPreset> = {
   },
   cloudy: {
     label: 'Cloudy',
-    icon: '☁️',
+    icon: 'cloud',
     temperature: 16,
     sky: ['#9aa7b0', '#d7dee2'],
     fogColor: '#c7cdd1',
@@ -59,7 +62,7 @@ export const WEATHER_PRESETS: Record<WeatherType, WeatherPreset> = {
   },
   rainy: {
     label: 'Rain',
-    icon: '🌧️',
+    icon: 'cloud-rain',
     temperature: 12,
     sky: ['#414a52', '#6b7680'],
     fogColor: '#4d5661',
@@ -77,7 +80,7 @@ export const WEATHER_PRESETS: Record<WeatherType, WeatherPreset> = {
   },
   night: {
     label: 'Night',
-    icon: '🌙',
+    icon: 'moon',
     temperature: 9,
     sky: ['#050914', '#151d33'],
     fogColor: '#0a0f1e',

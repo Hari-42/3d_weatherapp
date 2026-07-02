@@ -12,7 +12,8 @@ export const ROAD_HALF = ROAD_WIDTH / 2;
  */
 export const CITY_SCALE = 0.2;
 
-export const BUILDING_PALETTE = ['#e8c07d', '#d98b6d', '#8fb8de', '#c9a7de', '#9fd6c0', '#e6a6b8'];
+// Muted, realistic facade tones (concrete, sandstone, muted glass/brick).
+export const BUILDING_PALETTE = ['#c9c4bb', '#b6a493', '#9aa7b3', '#c2b8a8', '#a7b0a6', '#b9a6a0'];
 
 export interface BuildingSpec {
   x: number;
