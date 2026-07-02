@@ -1,61 +1,72 @@
 import { Canvas } from '@react-three/fiber/native';
-import React, { useRef } from 'react';
-import { PanResponder, StyleSheet, View } from 'react-native';
+import React, { useState } from 'react';
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import City from '../components/City';
 import Clouds from '../components/Clouds';
 import Lights from '../components/Lights';
 import WeatherSystem from '../components/WeatherSystem';
-import TopBar from '../components/ui/TopBar';
-import WeatherSwitcher from '../components/ui/WeatherSwitcher';
-import { useWeather } from '../context/WeatherContext';
+import CityCard from '../components/ui/CityCard';
+import PageDots from '../components/ui/PageDots';
 import { useAnimatedPreset } from '../hooks/useAnimatedPreset';
 import { theme } from '../theme/colors';
+import { CITIES } from '../types/city';
+import { WEATHER_PRESETS } from '../types/weather';
 
-function SceneContent({ dragRotation }: { dragRotation: React.MutableRefObject<number> }) {
-  const { preset } = useWeather();
+function SceneContent({ cityIndex }: { cityIndex: number }) {
+  const preset = WEATHER_PRESETS[CITIES[cityIndex].weather];
   const animated = useAnimatedPreset(preset);
 
   return (
     <>
       <WeatherSystem animated={animated} />
       <Lights animated={animated} />
-      <City animated={animated} dragRotation={dragRotation} />
+      <City animated={animated} />
       <Clouds animated={animated} />
     </>
   );
 }
 
 export default function HomeScreen() {
-  const { weather, setWeather, preset } = useWeather();
-  const dragRotation = useRef(0);
-  const dragStart = useRef(0);
+  const { width } = useWindowDimensions();
+  const [cityIndex, setCityIndex] = useState(0);
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_, gestureState) => Math.abs(gestureState.dx) > 2,
-      onPanResponderGrant: () => {
-        dragStart.current = dragRotation.current;
-      },
-      onPanResponderMove: (_, gestureState) => {
-        dragRotation.current = dragStart.current + gestureState.dx * 0.01;
-      },
-    })
-  ).current;
+  const handleScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const index = Math.round(event.nativeEvent.contentOffset.x / width);
+    setCityIndex(Math.max(0, Math.min(CITIES.length - 1, index)));
+  };
 
   return (
     <View style={styles.container}>
-      <View style={StyleSheet.absoluteFill} {...panResponder.panHandlers}>
-        <Canvas shadows camera={{ position: [12, 10, 15], fov: 50 }} style={styles.canvas}>
-          <SceneContent dragRotation={dragRotation} />
-        </Canvas>
-      </View>
+      <Canvas
+        shadows
+        camera={{ position: [7, 6, 9], fov: 45 }}
+        style={StyleSheet.absoluteFillObject}
+      >
+        <SceneContent cityIndex={cityIndex} />
+      </Canvas>
 
-      <View style={styles.overlay} pointerEvents="box-none">
-        <TopBar preset={preset} />
-        <View style={styles.spacer} />
-        <WeatherSwitcher weather={weather} onSelect={setWeather} />
-      </View>
+      <ScrollView
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={handleScrollEnd}
+        style={StyleSheet.absoluteFill}
+      >
+        {CITIES.map((city) => (
+          <View key={city.id} style={[styles.page, { width }]}>
+            <CityCard city={city} />
+          </View>
+        ))}
+      </ScrollView>
+
+      <PageDots count={CITIES.length} activeIndex={cityIndex} />
     </View>
   );
 }
@@ -65,16 +76,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.background,
   },
-  canvas: {
-    flex: 1,
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
+  page: {
     paddingTop: 60,
-    paddingBottom: 32,
     paddingHorizontal: 16,
-  },
-  spacer: {
-    flex: 1,
   },
 });

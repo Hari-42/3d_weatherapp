@@ -11,12 +11,11 @@ import Water from './Water';
 
 interface CityProps {
   animated: React.MutableRefObject<AnimatedPreset>;
-  dragRotation: React.MutableRefObject<number>;
 }
 
 const AUTO_ROTATE_SPEED = 0.05;
 
-export default function City({ animated, dragRotation }: CityProps) {
+export default function City({ animated }: CityProps) {
   const groupRef = useRef<THREE.Group>(null);
   const autoRotation = useRef(0);
   const layout = useMemo(() => generateCityLayout(), []);
@@ -24,12 +23,12 @@ export default function City({ animated, dragRotation }: CityProps) {
   useSafeFrame((_, delta) => {
     autoRotation.current += delta * AUTO_ROTATE_SPEED;
     if (groupRef.current) {
-      groupRef.current.rotation.y = autoRotation.current + dragRotation.current;
+      groupRef.current.rotation.y = autoRotation.current;
     }
   }, 'City');
 
   return (
-    <group>
+    <group scale={0.2}>
       <Water animated={animated} />
       <group ref={groupRef}>
         <mesh position={[0, -0.25, 0]} receiveShadow castShadow>

@@ -19,7 +19,6 @@ export interface WeatherPreset {
   moonlight: boolean;
 }
 
-export const WEATHER_ORDER: WeatherType[] = ['sunny', 'cloudy', 'rainy', 'night'];
 
 export const WEATHER_PRESETS: Record<WeatherType, WeatherPreset> = {
   sunny: {
