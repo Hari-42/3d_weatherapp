@@ -26,6 +26,9 @@ import { theme } from '../theme/colors';
 import { WeatherType, WEATHER_PRESETS } from '../types/weather';
 import { CITY_SCALE } from '../utils/cityLayout';
 
+// How far down the whole diorama sits, to keep it clear of the card overlay.
+const DIORAMA_Y = -1.6;
+
 function SceneContent({ weatherType }: { weatherType: WeatherType }) {
   const animated = useAnimatedPreset(WEATHER_PRESETS[weatherType]);
 
@@ -33,12 +36,15 @@ function SceneContent({ weatherType }: { weatherType: WeatherType }) {
     <>
       <WeatherSystem animated={animated} />
       <Lights animated={animated} />
-      <City animated={animated} />
-      {/* Rain and clouds share the city's scale so they stay proportional
-          to the miniature instead of towering over it. */}
-      <group scale={CITY_SCALE}>
-        <Clouds animated={animated} />
-        <Rain animated={animated} />
+      {/* City + its clouds/rain move down together so they stay aligned. */}
+      <group position={[0, DIORAMA_Y, 0]}>
+        <City animated={animated} />
+        {/* Rain and clouds share the city's scale so they stay proportional
+            to the miniature instead of towering over it. */}
+        <group scale={CITY_SCALE}>
+          <Clouds animated={animated} />
+          <Rain animated={animated} />
+        </group>
       </group>
     </>
   );

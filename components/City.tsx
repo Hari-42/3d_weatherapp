@@ -36,6 +36,11 @@ export default function City({ animated }: CityProps) {
           <meshStandardMaterial attach="material-1" color="#6f9256" flatShading roughness={0.9} />
           <meshStandardMaterial attach="material-2" color="#4a3f31" flatShading roughness={0.95} />
         </mesh>
+        {/* Rocky underside tapering to a deep point so the island doesn't end flat. */}
+        <mesh position={[0, -3.8, 0]} rotation={[Math.PI, 0, 0]}>
+          <coneGeometry args={[PLATFORM_RADIUS * 0.96, 5, 8]} />
+          <meshStandardMaterial color="#6f5e49" flatShading roughness={1} />
+        </mesh>
         <Roads />
         <Buildings buildings={layout.buildings} animated={animated} />
         <Trees trees={layout.trees} />
