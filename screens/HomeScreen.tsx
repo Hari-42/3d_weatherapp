@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { Canvas } from '@react-three/fiber/native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   NativeScrollEvent,
   NativeSyntheticEvent,
   Pressable,
@@ -58,6 +59,7 @@ export default function HomeScreen() {
   const [cityIndex, setCityIndex] = useState(0);
   const [adding, setAdding] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
+  const scrollX = useRef(new Animated.Value(0)).current;
 
   // Keep the active index valid as cities are added/removed.
   useEffect(() => {
@@ -91,12 +93,17 @@ export default function HomeScreen() {
       </Canvas>
 
       {cities.length > 0 ? (
-        <ScrollView
-          ref={scrollRef}
+        <Animated.ScrollView
+          ref={scrollRef as any}
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
           onMomentumScrollEnd={handleScrollEnd}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+            { useNativeDriver: false }
+          )}
+          scrollEventThrottle={16}
           style={StyleSheet.absoluteFill}
         >
           {cities.map((city) => (
@@ -104,7 +111,7 @@ export default function HomeScreen() {
               <CityCard city={city} weather={weatherByCity[city.id]} error={error} onRemove={removeCity} />
             </View>
           ))}
-        </ScrollView>
+        </Animated.ScrollView>
       ) : (
         <View style={styles.empty} pointerEvents="none">
           <Text style={styles.emptyText}>No cities yet.</Text>
@@ -116,7 +123,9 @@ export default function HomeScreen() {
         <Feather name="plus" size={22} color={theme.textPrimary} />
       </Pressable>
 
-      {cities.length > 1 ? <PageDots count={cities.length} activeIndex={cityIndex} /> : null}
+      {cities.length > 1 ? (
+        <PageDots count={cities.length} scrollX={scrollX} pageWidth={width} />
+      ) : null}
 
       {adding ? (
         <AddCityOverlay onAdd={addCity} onClose={() => setAdding(false)} />
