@@ -30,7 +30,7 @@ export const WEATHER_PRESETS: Record<WeatherType, WeatherPreset> = {
     temperature: 24,
     sky: ['#8ed2ff', '#eaf7ff'],
     fogColor: '#bfe6ff',
-    fogDensity: 0,
+    fogDensity: 0.01,
     ambientIntensity: 0.65,
     ambientColor: '#fff3d6',
     sunIntensity: 1.85,

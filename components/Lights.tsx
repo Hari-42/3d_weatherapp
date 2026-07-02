@@ -15,6 +15,7 @@ export default function Lights({ animated }: LightsProps) {
   const ambientRef = useRef<THREE.AmbientLight>(null);
   const sunRef = useRef<THREE.DirectionalLight>(null);
   const fillRef = useRef<THREE.HemisphereLight>(null);
+  const rimRef = useRef<THREE.DirectionalLight>(null);
 
   useSafeFrame(() => {
     const a = animated.current;
@@ -32,19 +33,25 @@ export default function Lights({ animated }: LightsProps) {
     }
 
     if (fillRef.current) {
-      fillRef.current.intensity = THREE.MathUtils.lerp(0.5, 0.15, a.moonlight.value);
+      fillRef.current.intensity = THREE.MathUtils.lerp(0.45, 0.15, a.moonlight.value);
+    }
+
+    // Cool back light separates the city from the sky and lifts the dark sides.
+    if (rimRef.current) {
+      rimRef.current.intensity = THREE.MathUtils.lerp(0.4, 0.18, a.moonlight.value);
     }
   }, 'Lights');
 
   return (
     <>
       <ambientLight ref={ambientRef} />
-      <hemisphereLight ref={fillRef} args={['#bcd3ff', '#2b2f3a', 0.5]} />
+      <hemisphereLight ref={fillRef} args={['#bcd3ff', '#2b2f3a', 0.45]} />
+      <directionalLight ref={rimRef} position={[-7, 6, -6]} color="#aecbff" intensity={0.4} />
       <directionalLight
         ref={sunRef}
         castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
         shadow-camera-left={-8}
         shadow-camera-right={8}
         shadow-camera-top={8}

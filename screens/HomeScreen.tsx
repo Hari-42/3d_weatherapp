@@ -82,6 +82,9 @@ export default function HomeScreen() {
       <Canvas
         shadows
         camera={{ position: [7, 6, 9], fov: 45 }}
+        // Slightly lifted exposure on top of r3f's default ACES tone mapping
+        // gives a warmer, punchier image without blowing out highlights.
+        gl={{ toneMappingExposure: 1.15 }}
         style={StyleSheet.absoluteFillObject}
       >
         <SceneContent weatherType={activeWeather} />
