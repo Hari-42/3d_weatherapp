@@ -15,13 +15,13 @@ import WeatherSystem from '../components/WeatherSystem';
 import CityCard from '../components/ui/CityCard';
 import PageDots from '../components/ui/PageDots';
 import { useAnimatedPreset } from '../hooks/useAnimatedPreset';
+import { useCitiesWeather } from '../hooks/useCitiesWeather';
 import { theme } from '../theme/colors';
 import { CITIES } from '../types/city';
-import { WEATHER_PRESETS } from '../types/weather';
+import { WeatherType, WEATHER_PRESETS } from '../types/weather';
 
-function SceneContent({ cityIndex }: { cityIndex: number }) {
-  const preset = WEATHER_PRESETS[CITIES[cityIndex].weather];
-  const animated = useAnimatedPreset(preset);
+function SceneContent({ weatherType }: { weatherType: WeatherType }) {
+  const animated = useAnimatedPreset(WEATHER_PRESETS[weatherType]);
 
   return (
     <>
@@ -36,11 +36,15 @@ function SceneContent({ cityIndex }: { cityIndex: number }) {
 export default function HomeScreen() {
   const { width } = useWindowDimensions();
   const [cityIndex, setCityIndex] = useState(0);
+  const { weatherByCity, error } = useCitiesWeather();
 
   const handleScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const index = Math.round(event.nativeEvent.contentOffset.x / width);
     setCityIndex(Math.max(0, Math.min(CITIES.length - 1, index)));
   };
+
+  // Until live data arrives, fall back to a neutral sunny scene.
+  const activeWeather = weatherByCity[CITIES[cityIndex].id]?.weather ?? 'sunny';
 
   return (
     <View style={styles.container}>
@@ -49,7 +53,7 @@ export default function HomeScreen() {
         camera={{ position: [7, 6, 9], fov: 45 }}
         style={StyleSheet.absoluteFillObject}
       >
-        <SceneContent cityIndex={cityIndex} />
+        <SceneContent weatherType={activeWeather} />
       </Canvas>
 
       <ScrollView
@@ -61,7 +65,7 @@ export default function HomeScreen() {
       >
         {CITIES.map((city) => (
           <View key={city.id} style={[styles.page, { width }]}>
-            <CityCard city={city} />
+            <CityCard city={city} weather={weatherByCity[city.id]} error={error} />
           </View>
         ))}
       </ScrollView>
