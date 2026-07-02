@@ -27,7 +27,7 @@ import { WeatherType, WEATHER_PRESETS } from '../types/weather';
 import { CITY_SCALE } from '../utils/cityLayout';
 
 // How far down the whole diorama sits, to keep it clear of the card overlay.
-const DIORAMA_Y = -1.6;
+const DIORAMA_Y = -2.8;
 
 function SceneContent({ weatherType }: { weatherType: WeatherType }) {
   const animated = useAnimatedPreset(WEATHER_PRESETS[weatherType]);
