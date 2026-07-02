@@ -54,7 +54,9 @@ export default function Rain({ animated }: RainProps) {
       <pointsMaterial
         ref={materialRef}
         color="#cfe3ff"
-        size={0.06}
+        // sizeAttenuation size is in world space and is NOT affected by the
+        // parent group's scale, so it's tuned small to match the miniature.
+        size={0.02}
         transparent
         opacity={0}
         depthWrite={false}

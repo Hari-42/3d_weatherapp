@@ -3,7 +3,6 @@ import React, { useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 import { AnimatedPreset } from '../hooks/useAnimatedPreset';
 import { useSafeFrame } from '../hooks/useSafeFrame';
-import Rain from './Rain';
 
 interface WeatherSystemProps {
   animated: React.MutableRefObject<AnimatedPreset>;
@@ -28,7 +27,7 @@ const skyFragmentShader = `
   }
 `;
 
-/** Sky dome + fog + rain — the "weather" layer that sits over the static city geometry. */
+/** Sky dome + fog — the full-size background layer behind the miniature city. */
 export default function WeatherSystem({ animated }: WeatherSystemProps) {
   const { scene } = useThree();
 
@@ -58,17 +57,14 @@ export default function WeatherSystem({ animated }: WeatherSystemProps) {
   }, 'WeatherSystem');
 
   return (
-    <>
-      <mesh>
-        <sphereGeometry args={[45, 16, 12]} />
-        <shaderMaterial
-          side={THREE.BackSide}
-          uniforms={uniforms}
-          vertexShader={skyVertexShader}
-          fragmentShader={skyFragmentShader}
-        />
-      </mesh>
-      <Rain animated={animated} />
-    </>
+    <mesh>
+      <sphereGeometry args={[45, 16, 12]} />
+      <shaderMaterial
+        side={THREE.BackSide}
+        uniforms={uniforms}
+        vertexShader={skyVertexShader}
+        fragmentShader={skyFragmentShader}
+      />
+    </mesh>
   );
 }

@@ -4,6 +4,14 @@ export const PLATFORM_RADIUS = 7.2;
 export const ROAD_WIDTH = 1.6;
 export const ROAD_HALF = ROAD_WIDTH / 2;
 
+/**
+ * Uniform scale applied to the whole diorama (city + its weather). The layout
+ * above is authored at full size for readable numbers; everything that should
+ * sit "inside" the miniature — buildings, rain, clouds — is scaled by this so
+ * the weather stays proportional to the tiny city.
+ */
+export const CITY_SCALE = 0.2;
+
 export const BUILDING_PALETTE = ['#e8c07d', '#d98b6d', '#8fb8de', '#c9a7de', '#9fd6c0', '#e6a6b8'];
 
 export interface BuildingSpec {

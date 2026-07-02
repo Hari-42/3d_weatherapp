@@ -11,6 +11,7 @@ import {
 import City from '../components/City';
 import Clouds from '../components/Clouds';
 import Lights from '../components/Lights';
+import Rain from '../components/Rain';
 import WeatherSystem from '../components/WeatherSystem';
 import CityCard from '../components/ui/CityCard';
 import PageDots from '../components/ui/PageDots';
@@ -19,6 +20,7 @@ import { useCitiesWeather } from '../hooks/useCitiesWeather';
 import { theme } from '../theme/colors';
 import { CITIES } from '../types/city';
 import { WeatherType, WEATHER_PRESETS } from '../types/weather';
+import { CITY_SCALE } from '../utils/cityLayout';
 
 function SceneContent({ weatherType }: { weatherType: WeatherType }) {
   const animated = useAnimatedPreset(WEATHER_PRESETS[weatherType]);
@@ -28,7 +30,12 @@ function SceneContent({ weatherType }: { weatherType: WeatherType }) {
       <WeatherSystem animated={animated} />
       <Lights animated={animated} />
       <City animated={animated} />
-      <Clouds animated={animated} />
+      {/* Rain and clouds share the city's scale so they stay proportional
+          to the miniature instead of towering over it. */}
+      <group scale={CITY_SCALE}>
+        <Clouds animated={animated} />
+        <Rain animated={animated} />
+      </group>
     </>
   );
 }

@@ -2,7 +2,7 @@ import React, { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { AnimatedPreset } from '../hooks/useAnimatedPreset';
 import { useSafeFrame } from '../hooks/useSafeFrame';
-import { generateCityLayout, PLATFORM_RADIUS } from '../utils/cityLayout';
+import { CITY_SCALE, generateCityLayout, PLATFORM_RADIUS } from '../utils/cityLayout';
 import Buildings from './Buildings';
 import Roads from './Roads';
 import StreetLights from './StreetLights';
@@ -28,7 +28,7 @@ export default function City({ animated }: CityProps) {
   }, 'City');
 
   return (
-    <group scale={0.2}>
+    <group scale={CITY_SCALE}>
       <Water animated={animated} />
       <group ref={groupRef}>
         <mesh position={[0, -0.25, 0]} receiveShadow castShadow>
