@@ -25,6 +25,8 @@ import ForecastList from '../components/ui/ForecastList';
 import PageDots from '../components/ui/PageDots';
 import SunCard from '../components/ui/SunCard';
 import SunDetail from '../components/ui/SunDetail';
+import UvCard from '../components/ui/UvCard';
+import WindCard from '../components/ui/WindCard';
 import { useAnimatedPreset } from '../hooks/useAnimatedPreset';
 import { useCitiesWeather } from '../hooks/useCitiesWeather';
 import { useCityGeometry } from '../hooks/useCityGeometry';
@@ -220,12 +222,19 @@ export default function HomeScreen() {
                 <View style={{ height: height * 0.46 }} />
                 {weather?.daily?.length ? <ForecastList daily={weather.daily} /> : null}
                 {weather ? (
-                  <SunCard
-                    lat={city.latitude}
-                    lon={city.longitude}
-                    offsetSec={weather.utcOffsetSeconds}
-                    onOpen={() => setSunOpen(true)}
-                  />
+                  <>
+                    <SunCard
+                      lat={city.latitude}
+                      lon={city.longitude}
+                      offsetSec={weather.utcOffsetSeconds}
+                      onOpen={() => setSunOpen(true)}
+                    />
+                    <View style={styles.smallRow}>
+                      <UvCard uv={weather.uvIndex} />
+                      <View style={{ width: 14 }} />
+                      <WindCard speed={weather.windSpeed} direction={weather.windDirection} />
+                    </View>
+                  </>
                 ) : null}
                 <View style={{ height: 32 }} />
               </ScrollView>
@@ -306,6 +315,10 @@ const styles = StyleSheet.create({
   pageContent: {
     paddingTop: 100,
     paddingHorizontal: 16,
+  },
+  smallRow: {
+    flexDirection: 'row',
+    marginTop: 14,
   },
   addButton: {
     position: 'absolute',
