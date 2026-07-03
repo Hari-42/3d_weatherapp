@@ -140,6 +140,10 @@ export default function HomeScreen() {
         </View>
       )}
 
+      <Text style={styles.brand} pointerEvents="none">
+        MeteoScope
+      </Text>
+
       <Pressable style={styles.addButton} onPress={() => setAdding(true)} hitSlop={10}>
         <Feather name="plus" size={22} color={theme.textPrimary} />
       </Pressable>
@@ -184,10 +188,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.glassBorder,
   },
+  brand: {
+    position: 'absolute',
+    top: 56,
+    left: 22,
+    color: theme.textPrimary,
+    fontSize: 20,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
   mapLoading: {
     position: 'absolute',
-    top: 62,
-    left: 20,
+    top: 92,
+    left: 22,
     flexDirection: 'row',
     alignItems: 'center',
   },
