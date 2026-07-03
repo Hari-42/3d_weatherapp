@@ -22,15 +22,27 @@ import CityCard from '../components/ui/CityCard';
 import PageDots from '../components/ui/PageDots';
 import { useAnimatedPreset } from '../hooks/useAnimatedPreset';
 import { useCitiesWeather } from '../hooks/useCitiesWeather';
+import { useCityGeometry } from '../hooks/useCityGeometry';
 import { useCityList } from '../hooks/useCityList';
+import { OsmGeometry } from '../services/osm';
+import { prefetchCities } from '../services/osmCache';
 import { theme } from '../theme/colors';
 import { WeatherType, WEATHER_PRESETS } from '../types/weather';
 import { CITY_SCALE } from '../utils/cityLayout';
+import { getCityProfile, GroundKind } from '../utils/cityProfile';
 
 // How far down the whole diorama sits, to keep it clear of the card overlay.
-const DIORAMA_Y = -2.8;
+const DIORAMA_Y = -3.4;
 
-function SceneContent({ weatherType }: { weatherType: WeatherType }) {
+function SceneContent({
+  weatherType,
+  ground,
+  geometry,
+}: {
+  weatherType: WeatherType;
+  ground: GroundKind;
+  geometry: OsmGeometry | null;
+}) {
   const animated = useAnimatedPreset(WEATHER_PRESETS[weatherType]);
 
   return (
@@ -39,7 +51,7 @@ function SceneContent({ weatherType }: { weatherType: WeatherType }) {
       <Lights animated={animated} />
       {/* City + its clouds/rain move down together so they stay aligned. */}
       <group position={[0, DIORAMA_Y, 0]}>
-        <City animated={animated} />
+        <City animated={animated} ground={ground} geometry={geometry} />
         {/* Rain and clouds share the city's scale so they stay proportional
             to the miniature instead of towering over it. */}
         <group scale={CITY_SCALE}>
@@ -61,6 +73,11 @@ export default function HomeScreen() {
   const scrollRef = useRef<ScrollView>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
 
+  // Preload OSM geometry for every city in the background so swiping is instant.
+  useEffect(() => {
+    void prefetchCities(cities);
+  }, [cities]);
+
   // Keep the active index valid as cities are added/removed.
   useEffect(() => {
     if (cityIndex > cities.length - 1) {
@@ -78,6 +95,10 @@ export default function HomeScreen() {
   const activeCity = cities[cityIndex];
   // Until live data arrives (or with no cities), fall back to a neutral sunny scene.
   const activeWeather = activeCity ? weatherByCity[activeCity.id]?.weather ?? 'sunny' : 'sunny';
+  // A few known cities get a characteristic terrain (e.g. desert).
+  const profile = getCityProfile(activeCity?.name);
+  // Real OSM geometry for the active city (null while loading or on failure).
+  const { geometry, status } = useCityGeometry(activeCity);
 
   return (
     <View style={styles.container}>
@@ -89,7 +110,7 @@ export default function HomeScreen() {
         gl={{ toneMappingExposure: 1.15 }}
         style={StyleSheet.absoluteFillObject}
       >
-        <SceneContent weatherType={activeWeather} />
+        <SceneContent weatherType={activeWeather} ground={profile.ground} geometry={geometry} />
       </Canvas>
 
       {cities.length > 0 ? (
@@ -122,6 +143,13 @@ export default function HomeScreen() {
       <Pressable style={styles.addButton} onPress={() => setAdding(true)} hitSlop={10}>
         <Feather name="plus" size={22} color={theme.textPrimary} />
       </Pressable>
+
+      {status === 'loading' && activeCity ? (
+        <View style={styles.mapLoading} pointerEvents="none">
+          <Feather name="map-pin" size={12} color={theme.textSecondary} />
+          <Text style={styles.mapLoadingText}>Loading map…</Text>
+        </View>
+      ) : null}
 
       {cities.length > 1 ? (
         <PageDots count={cities.length} scrollX={scrollX} pageWidth={width} />
@@ -156,11 +184,24 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.glassBorder,
   },
+  mapLoading: {
+    position: 'absolute',
+    top: 62,
+    left: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  mapLoadingText: {
+    color: theme.textSecondary,
+    fontSize: 12,
+    marginLeft: 5,
+  },
   empty: {
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   emptyText: {
     color: theme.textPrimary,
     fontSize: 20,
