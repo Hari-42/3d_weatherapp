@@ -23,6 +23,8 @@ import AddCityOverlay from '../components/ui/AddCityOverlay';
 import CityCard from '../components/ui/CityCard';
 import ForecastList from '../components/ui/ForecastList';
 import PageDots from '../components/ui/PageDots';
+import SunCard from '../components/ui/SunCard';
+import SunDetail from '../components/ui/SunDetail';
 import { useAnimatedPreset } from '../hooks/useAnimatedPreset';
 import { useCitiesWeather } from '../hooks/useCitiesWeather';
 import { useCityGeometry } from '../hooks/useCityGeometry';
@@ -114,6 +116,7 @@ export default function HomeScreen() {
   const [cityIndex, setCityIndex] = useState(0);
   const [adding, setAdding] = useState(false);
   const [interactive, setInteractive] = useState(false);
+  const [sunOpen, setSunOpen] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
 
@@ -216,6 +219,14 @@ export default function HomeScreen() {
                 {/* Gap so the 3D island stays visible above the fold. */}
                 <View style={{ height: height * 0.46 }} />
                 {weather?.daily?.length ? <ForecastList daily={weather.daily} /> : null}
+                {weather ? (
+                  <SunCard
+                    lat={city.latitude}
+                    lon={city.longitude}
+                    offsetSec={weather.utcOffsetSeconds}
+                    onOpen={() => setSunOpen(true)}
+                  />
+                ) : null}
                 <View style={{ height: 32 }} />
               </ScrollView>
             );
@@ -270,6 +281,16 @@ export default function HomeScreen() {
       )}
 
       {adding ? <AddCityOverlay onAdd={addCity} onClose={() => setAdding(false)} /> : null}
+
+      {sunOpen && activeCity && weatherByCity[activeCity.id] ? (
+        <SunDetail
+          lat={activeCity.latitude}
+          lon={activeCity.longitude}
+          offsetSec={weatherByCity[activeCity.id]!.utcOffsetSeconds}
+          cityName={activeCity.name}
+          onClose={() => setSunOpen(false)}
+        />
+      ) : null}
     </View>
   );
 }
