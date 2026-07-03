@@ -11,6 +11,7 @@ interface CityProps {
   animated: React.MutableRefObject<AnimatedPreset>;
   ground: GroundKind;
   geometry: OsmGeometry | null;
+  paused?: boolean;
 }
 
 const AUTO_ROTATE_SPEED = 0.05;
@@ -23,13 +24,13 @@ const GROUND_COLORS: Record<GroundKind, [string, string, string]> = {
   sand: ['#c8b184', '#d8c48f', '#7d6a4a'],
 };
 
-export default function City({ animated, ground, geometry }: CityProps) {
+export default function City({ animated, ground, geometry, paused }: CityProps) {
   const groupRef = useRef<THREE.Group>(null);
   const autoRotation = useRef(0);
   const [soil, top, under] = GROUND_COLORS[ground];
 
   useSafeFrame((_, delta) => {
-    autoRotation.current += delta * AUTO_ROTATE_SPEED;
+    if (!paused) autoRotation.current += delta * AUTO_ROTATE_SPEED;
     if (groupRef.current) {
       groupRef.current.rotation.y = autoRotation.current;
     }
